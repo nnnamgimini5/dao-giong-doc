@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14102b">
+  <title>Đạo pro tạo giọng đọc tùy chỉnh</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-waves" aria-hidden="true"></div>
+
+  <header class="app-header">
+    <div class="header-title">
+      <span class="logo-mark" aria-hidden="true">🎙️</span>
+      <div class="title-text">
+        <h1>Đạo pro tạo giọng đọc tùy chỉnh</h1>
+        <span id="mode-badge" class="mode-badge" aria-live="polite">Miễn phí · chạy trong trình duyệt</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" id="btn-music-toggle" class="btn-header" aria-pressed="false" title="Bật hoặc tắt nhạc nền">
+        <span id="music-icon" aria-hidden="true">🔇</span>
+        <span id="music-label" class="btn-label">Nhạc nền: Tắt</span>
+      </button>
+      <input type="range" id="music-volume" class="music-volume" min="0" max="1" step="0.05" value="0.4" aria-label="Âm lượng nhạc nền">
+      <button type="button" id="btn-check-update" class="btn-header" title="Kiểm tra phiên bản mới và làm mới ứng dụng">
+        <span aria-hidden="true">🔄</span>
+        <span class="btn-label">Cập nhật</span>
+        <span id="app-version-badge" class="version-badge">v2.0.0</span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="tab-bar" aria-label="Các khu vực của ứng dụng">
+    <button type="button" class="nav-tab active" data-tab="tts"><span class="tab-ico" aria-hidden="true">🎙️</span><span class="tab-name">Tạo giọng</span></button>
+    <button type="button" class="nav-tab" data-tab="script"><span class="tab-ico" aria-hidden="true">📜</span><span class="tab-name">Kịch bản</span></button>
+    <button type="button" class="nav-tab" data-tab="fav"><span class="tab-ico" aria-hidden="true">⭐</span><span class="tab-name">Yêu thích</span></button>
+    <button type="button" class="nav-tab" data-tab="settings"><span class="tab-ico" aria-hidden="true">⚙️</span><span class="tab-name">Giọng</span></button>
+  </nav>
+
+  <main class="app-main">
+
+    <section class="tab-panel active-panel" id="panel-tts" aria-labelledby="h-tts">
+      <h2 id="h-tts"><span aria-hidden="true">🎙️</span> Tạo giọng</h2>
+      <p class="hint">Miễn phí, không cần khóa. Lần đầu dùng mỗi giọng, máy sẽ tải mô hình giọng một lần rồi nhớ lại.</p>
+      <div class="card">
+        <label class="field-label" for="tts-text">Nội dung cần đọc</label>
+        <textarea id="tts-text" class="input textarea" rows="6" placeholder="Nhập hoặc dán đoạn văn vào đây..."></textarea>
+        <div class="char-row"><span id="tts-char-count" class="muted">0 ký tự</span></div>
+
+        <label class="field-label" for="tts-voice">Giọng đọc</label>
+        <select id="tts-voice" class="input"></select>
+
+        <div class="slider-block">
+          <div class="slider-head"><label for="tts-speed">Tốc độ</label><output id="tts-speed-val" for="tts-speed">1</output></div>
+          <input type="range" id="tts-speed" class="slider" min="0.5" max="2" step="0.05" value="1">
+        </div>
+        <div class="slider-block">
+          <div class="slider-head"><label for="tts-pitch">Cao độ (nửa cung)</label><output id="tts-pitch-val" for="tts-pitch">0</output></div>
+          <input type="range" id="tts-pitch" class="slider" min="-6" max="6" step="1" value="0">
+        </div>
+        <div class="slider-block">
+          <div class="slider-head"><label for="tts-vol">Âm lượng</label><output id="tts-vol-val" for="tts-vol">1</output></div>
+          <input type="range" id="tts-vol" class="slider" min="0.2" max="3" step="0.1" value="1">
+        </div>
+
+        <button type="button" id="btn-tts-generate" class="btn btn-primary btn-big">🎙️ Tạo giọng đọc</button>
+        <div id="tts-progress" class="progress" hidden><div id="tts-progress-bar" class="progress-bar"></div></div>
+        <div id="tts-wave" class="wave" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <p id="tts-status" class="status" role="status" aria-live="polite"></p>
+        <p id="tts-browser-note" class="note note-warn" hidden>Giọng trình duyệt chỉ để nghe, không tải được file. Chọn một giọng Piper để tải mp3.</p>
+        <audio id="tts-audio" controls hidden></audio>
+        <div class="btn-row">
+          <button type="button" id="btn-tts-download" class="btn btn-primary" disabled>⬇️ Tải mp3</button>
+          <button type="button" id="btn-tts-download-wav" class="btn" disabled>⬇️ Tải wav</button>
+          <button type="button" id="btn-tts-save-fav" class="btn">⭐ Lưu giọng yêu thích</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-script" aria-labelledby="h-script">
+      <h2 id="h-script"><span aria-hidden="true">📜</span> Kịch bản nhiều dòng</h2>
+      <p class="hint">Mỗi dòng là một câu. Dùng giọng và thông số đang chọn ở tab Tạo giọng.</p>
+      <div class="card">
+        <label class="field-label" for="script-text">Kịch bản</label>
+        <textarea id="script-text" class="input textarea" rows="8" placeholder="Mỗi dòng một câu..."></textarea>
+        <div class="btn-row">
+          <button type="button" id="btn-script-run" class="btn btn-primary">▶️ Tạo giọng cho từng dòng</button>
+          <button type="button" id="btn-script-download-all" class="btn" disabled>⬇️ Tải file ghép (mp3)</button>
+        </div>
+        <div id="script-progress" class="progress" hidden><div id="script-progress-bar" class="progress-bar"></div></div>
+        <p id="script-status" class="status" role="status" aria-live="polite"></p>
+        <div id="script-list" class="row-list"></div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-fav" aria-labelledby="h-fav">
+      <h2 id="h-fav"><span aria-hidden="true">⭐</span> Giọng yêu thích</h2>
+      <p class="hint">Các thiết lập giọng đã lưu. Bấm Dùng để áp vào tab Tạo giọng.</p>
+      <div class="card">
+        <p id="fav-empty" class="empty">Chưa có giọng yêu thích. Hãy tạo giọng rồi bấm "Lưu giọng yêu thích".</p>
+        <div id="fav-list" class="row-list"></div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-settings" aria-labelledby="h-set">
+      <h2 id="h-set"><span aria-hidden="true">⚙️</span> Giọng và thông tin</h2>
+      <div class="card">
+        <h3>Tải trước giọng</h3>
+        <p class="hint">Tải sẵn khi có Wi-Fi để lần sau tạo giọng ngay. Mô hình được lưu trong trình duyệt của anh.</p>
+        <div id="model-list" class="row-list"></div>
+        <p id="model-status" class="status" role="status" aria-live="polite"></p>
+        <button type="button" id="btn-clear-cache" class="btn btn-danger">🗑️ Xóa mô hình đã tải</button>
+      </div>
+      <div class="card">
+        <h3>Giới hạn cần biết</h3>
+        <ul class="plain-list">
+          <li>Không nhân bản giọng từ file ghi âm: việc này không làm được miễn phí trong trình duyệt.</li>
+          <li>Chất lượng giọng Piper tốt nhưng chưa bằng dịch vụ trả phí như MiniMax.</li>
+          <li>Cao độ chỉnh bằng xử lý âm thanh, nên chỉnh nhẹ (±3 nửa cung) sẽ tự nhiên nhất.</li>
+          <li>Giọng "vivos" theo nguồn dữ liệu chỉ dùng cá nhân, không thương mại. Các giọng còn lại dùng giấy phép MIT (kiểm tra lại trước khi dùng bán hàng).</li>
+          <li>Cần mạng ở lần đầu để tải mô hình giọng và thư viện.</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="global-toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <div class="avatar-wrapper" title="Đạo pro">
+    <div class="avatar-ring">
+      <img id="header-avatar-img" class="avatar-img" src="assets/avatar.jpg" alt="Ảnh đại diện">
+      <span id="header-avatar-fallback" class="avatar-fallback" style="display:none">ĐẠO</span>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
