@@ -27,7 +27,7 @@
       <button type="button" id="btn-check-update" class="btn-header" title="Kiểm tra phiên bản mới và làm mới ứng dụng">
         <span aria-hidden="true">🔄</span>
         <span class="btn-label">Cập nhật</span>
-        <span id="app-version-badge" class="version-badge">v2.1.1</span>
+        <span id="app-version-badge" class="version-badge">v2.2.0</span>
       </button>
     </div>
   </header>
@@ -54,7 +54,7 @@
 
         <div id="tts-speaker-row" hidden>
           <label class="field-label" for="tts-speaker">Người nói (giọng 3 có 65 người khác nhau)</label>
-          <div class="input-row"><select id="tts-speaker" class="input"></select><button type="button" id="btn-speaker-rand" class="btn" title="Chọn ngẫu nhiên">🎲</button></div>
+          <div class="input-row"><button type="button" id="btn-speaker-prev" class="btn" title="Người trước (nghe thử)">◀</button><select id="tts-speaker" class="input"></select><button type="button" id="btn-speaker-next" class="btn" title="Người sau (nghe thử)">▶</button><button type="button" id="btn-speaker-rand" class="btn" title="Chọn ngẫu nhiên và nghe thử">🎲</button></div>
         </div>
 
         <span class="field-label">Kiểu giọng nhanh</span>
@@ -78,6 +78,7 @@
           <input type="range" id="tts-vol" class="slider" min="0.2" max="3" step="0.1" value="1">
         </div>
 
+        <button type="button" id="btn-tts-preview" class="btn btn-block">🔊 Nghe thử giọng (đọc 1 câu ngắn)</button>
         <button type="button" id="btn-tts-generate" class="btn btn-primary btn-big">🎙️ Tạo giọng đọc</button>
         <div id="tts-progress" class="progress" hidden><div id="tts-progress-bar" class="progress-bar"></div></div>
         <div id="tts-wave" class="wave" aria-hidden="true">

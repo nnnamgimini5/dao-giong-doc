@@ -1,6 +1,6 @@
 {
   "name": "Đạo pro tạo giọng đọc tùy chỉnh",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "releasedAt": "2026-11-13",
-  "notes": "Sửa lỗi giọng 2 và 3 (bảng âm riêng). Thêm chọn 65 người nói (giọng 3) và kiểu giọng nhanh trẻ, già, trầm. Bản miễn phí: giọng đọc tiếng Việt chạy trong trình duyệt (Piper), không cần khóa API. Chỉnh tốc độ, cao độ, âm lượng; tải mp3 hoặc wav; kịch bản nhiều dòng; lưu giọng yêu thích."
+  "notes": "Thêm nút Nghe thử (1 câu ngắn) và ◀ ▶ đổi người nói nghe ngay. Sửa lỗi giọng 2 và 3 (bảng âm riêng). Thêm chọn 65 người nói (giọng 3) và kiểu giọng nhanh trẻ, già, trầm. Bản miễn phí: giọng đọc tiếng Việt chạy trong trình duyệt (Piper), không cần khóa API. Chỉnh tốc độ, cao độ, âm lượng; tải mp3 hoặc wav; kịch bản nhiều dòng; lưu giọng yêu thích."
 }
