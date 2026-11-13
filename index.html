@@ -27,7 +27,7 @@
       <button type="button" id="btn-check-update" class="btn-header" title="Kiểm tra phiên bản mới và làm mới ứng dụng">
         <span aria-hidden="true">🔄</span>
         <span class="btn-label">Cập nhật</span>
-        <span id="app-version-badge" class="version-badge">v2.0.0</span>
+        <span id="app-version-badge" class="version-badge">v2.1.0</span>
       </button>
     </div>
   </header>
@@ -51,6 +51,19 @@
 
         <label class="field-label" for="tts-voice">Giọng đọc</label>
         <select id="tts-voice" class="input"></select>
+
+        <div id="tts-speaker-row" hidden>
+          <label class="field-label" for="tts-speaker">Người nói (giọng 3 có 65 người khác nhau)</label>
+          <div class="input-row"><select id="tts-speaker" class="input"></select><button type="button" id="btn-speaker-rand" class="btn" title="Chọn ngẫu nhiên">🎲</button></div>
+        </div>
+
+        <span class="field-label">Kiểu giọng nhanh</span>
+        <div class="btn-row">
+          <button type="button" class="btn" data-preset="1,0">🔁 Mặc định</button>
+          <button type="button" class="btn" data-preset="1.1,3">🧒 Trẻ</button>
+          <button type="button" class="btn" data-preset="0.9,-3">🧓 Già</button>
+          <button type="button" class="btn" data-preset="0.95,-4">🎚️ Trầm</button>
+        </div>
 
         <div class="slider-block">
           <div class="slider-head"><label for="tts-speed">Tốc độ</label><output id="tts-speed-val" for="tts-speed">1</output></div>
@@ -122,6 +135,8 @@
           <li>Chất lượng giọng Piper tốt nhưng chưa bằng dịch vụ trả phí như MiniMax.</li>
           <li>Cao độ chỉnh bằng xử lý âm thanh, nên chỉnh nhẹ (±3 nửa cung) sẽ tự nhiên nhất.</li>
           <li>Giọng "vivos" theo nguồn dữ liệu chỉ dùng cá nhân, không thương mại. Các giọng còn lại dùng giấy phép MIT (kiểm tra lại trước khi dùng bán hàng).</li>
+          <li>Miễn phí hiện chỉ có giọng miền Bắc. Chưa có giọng Trung, Nam; giọng Nam/Trung, nam/nữ theo vùng cần dịch vụ trả phí hoặc mô hình mới sau này.</li>
+          <li>Giọng 3 (vivos) có 65 người nói với giọng nam, nữ khác nhau; hãy dùng nút 🎲 hoặc chọn từng người để nghe thử.</li>
           <li>Cần mạng ở lần đầu để tải mô hình giọng và thư viện.</li>
         </ul>
       </div>
