@@ -27,7 +27,7 @@
       <button type="button" id="btn-check-update" class="btn-header" title="Kiểm tra phiên bản mới và làm mới ứng dụng">
         <span aria-hidden="true">🔄</span>
         <span class="btn-label">Cập nhật</span>
-        <span id="app-version-badge" class="version-badge">v2.2.0</span>
+        <span id="app-version-badge" class="version-badge">v2.2.1</span>
       </button>
     </div>
   </header>
@@ -79,6 +79,7 @@
         </div>
 
         <button type="button" id="btn-tts-preview" class="btn btn-block">🔊 Nghe thử giọng (đọc 1 câu ngắn)</button>
+        <audio id="tts-preview-audio" controls hidden style="width:100%;margin-top:10px"></audio>
         <button type="button" id="btn-tts-generate" class="btn btn-primary btn-big">🎙️ Tạo giọng đọc</button>
         <div id="tts-progress" class="progress" hidden><div id="tts-progress-bar" class="progress-bar"></div></div>
         <div id="tts-wave" class="wave" aria-hidden="true">
