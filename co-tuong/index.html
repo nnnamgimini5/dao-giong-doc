@@ -61,6 +61,7 @@ body.live #liveBan{display:block!important}
 #liveBan{background:linear-gradient(90deg,#b71c1c,#ff6f00);border-radius:14px;padding:10px 12px;margin:6px 0;box-shadow:0 0 24px #ff3d0088;animation:pop .3s}
 .lvtop{font-weight:800;font-size:17px}.lvdot{background:#fff;color:#d50000;border-radius:6px;padding:1px 6px;margin-right:6px;font-size:12px;animation:gl 1.2s infinite}
 .lvinv{font-size:15px;margin-top:4px;font-weight:600}.lvinv b{font-size:22px;color:#fff59d;letter-spacing:2px}.lvev{font-size:13px;margin-top:4px;min-height:18px;opacity:.95}
+.mut{cursor:pointer;border-radius:8px;padding:7px 8px}.mut.on{background:#f5c26b22;outline:1px solid #f5c26b}
 .ver{font-size:11px;color:#9b8268;text-align:center;margin:8px 0}
 </style></head><body><div class="wrap">
 <header><div class="logo">帥</div><div><h1>Cờ Tướng Đạo Pro</h1><div class="sub" id="modeTxt">Chơi với máy</div></div>
@@ -114,6 +115,14 @@ body.live #liveBan{display:block!important}
 <label>Chủ app đăng nhập</label><div class="row"><input id="ownPw" type="password" placeholder="Mật khẩu chủ app" autocomplete="off"><button class="btn" id="bOwn" style="flex:.4">Mở khóa</button></div><div class="note" id="setMsg"></div></div>
 <div class="row" style="margin-top:14px"><button class="btn" id="bUpd">🔄 Kiểm tra cập nhật</button><button class="btn pri" id="bSetOk">Xong</button></div>
 <div class="note" id="chg" style="margin-top:10px"></div></div></div>
+<div class="modal" id="mMusic"><div class="mbox"><h2>🎵 Nhạc nền</h2><div class="note">Chọn nhạc tự soạn của game hoặc thêm nhạc của anh (mp3, m4a, wav…). Nhạc của anh lưu ngay trên máy này, lần sau mở game vẫn còn.</div>
+<div id="muList" style="margin:8px 0;max-height:240px;overflow:auto"></div>
+<div class="row"><button class="btn pri" id="muPlay">▶ Phát</button><button class="btn" id="muNext">⏭ Bài tiếp</button></div>
+<label>Âm lượng <span id="muVolV">35%</span></label><input type="range" id="muVol" min="0" max="100" step="5" style="padding:0">
+<label>Cách phát nhạc của anh</label><select id="muMode"><option value="all">Phát lần lượt</option><option value="shuffle">Ngẫu nhiên</option><option value="one">Lặp lại một bài</option></select>
+<label class="btn" style="display:block;text-align:center;margin-top:10px;cursor:pointer">➕ Thêm nhạc của anh (chọn được nhiều bài)<input type="file" id="muFile" accept="audio/*,.mp3,.m4a,.wav,.ogg,.aac,.flac" multiple style="display:none"></label>
+<button class="btn" id="muClose" style="width:100%;margin-top:10px">Đóng</button></div></div>
+
 <div class="modal" id="mAdmin"><div class="mbox"><h2>👑 Quản lý của chủ app</h2><div id="adminBody"></div><button class="btn pri" id="bAdOk" style="width:100%;margin-top:12px">Đóng</button></div></div>
 <div class="modal" id="mEnd"><div class="mbox" style="text-align:center"><div class="big" id="eBig">勝</div><h2 id="eT">Bạn thắng!</h2><div class="note" id="eD"></div>
 <div class="row" style="margin-top:14px"><button class="btn" id="bEndClose">Xem lại bàn</button><button class="btn pri" id="bAgain">Ván mới</button></div></div></div>
@@ -202,7 +211,7 @@ function think(b0,s,maxD,ms,noise){var b=new Int8Array(b0),lm=legal(b,s);if(!lm.
  return {m:best,score:sc,depth:dd,nodes:nodes,pv:pv}}
 </script>
 <script>
-const VERSION='2.1.0',CHANGES=['2.1.0 (18/11/2026): Chế độ phát trực tiếp TikTok (ẩn mọi thông tin riêng, hiện mã phòng mời khán giả), Siêu AI tự đánh thay khi anh đi chưa kịp.','2.0.0 (18/11/2026): Mời người chơi và khán giả qua link hoặc mã phòng, quản lý của chủ app (cấp quyền, chặn, mời ra), Siêu AI mách nước chỉ người có đặc quyền thấy, máy chơi mạnh hơn (tính sâu gấp đôi), bản web độc lập.','1.0.0 (18/11/2026): Chơi với máy 6 cấp độ, 2 người chung máy, chơi online qua mã phòng, đồng hồ, biên bản nước đi, gợi ý, đi lại, nhạc nền, hiệu ứng.'];
+const VERSION='2.2.0',CHANGES=['2.2.0 (18/11/2026): Nhạc nền tùy chỉnh: 4 bản nhạc tự soạn, thêm nhiều bài nhạc của anh (lưu trên máy), âm lượng, phát lần lượt, ngẫu nhiên hoặc lặp một bài.','2.1.0 (18/11/2026): Chế độ phát trực tiếp TikTok (ẩn mọi thông tin riêng, hiện mã phòng mời khán giả), Siêu AI tự đánh thay khi anh đi chưa kịp.','2.0.0 (18/11/2026): Mời người chơi và khán giả qua link hoặc mã phòng, quản lý của chủ app (cấp quyền, chặn, mời ra), Siêu AI mách nước chỉ người có đặc quyền thấy, máy chơi mạnh hơn (tính sâu gấp đôi), bản web độc lập.','1.0.0 (18/11/2026): Chơi với máy 6 cấp độ, 2 người chung máy, chơi online qua mã phòng, đồng hồ, biên bản nước đi, gợi ý, đi lại, nhạc nền, hiệu ứng.'];
 const ENG_SRC=document.getElementById('eng').textContent;
 const E=new Function(ENG_SRC+';return {initBoard,gen,legal,inCheck,think,kingSq,K,A,B,N,R,C,P}')();
 const $=s=>document.querySelector(s);const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -228,14 +237,37 @@ const SND={move(){if(!CFG.snd)return;const a=ac();if(!a)return;const t=a.current
  sel(){if(!CFG.snd)return;const a=ac();if(!a)return;tone(a.currentTime,980,.06,'sine',.12)},
  win(){if(!CFG.snd)return;const a=ac();if(!a)return;const t=a.currentTime;[523,659,784,1047,1319].forEach((f,i)=>tone(t+i*.12,f,.5,'triangle',.22))},
  lose(){if(!CFG.snd)return;const a=ac();if(!a)return;const t=a.currentTime;[392,330,262,196].forEach((f,i)=>tone(t+i*.18,f,.5,'sine',.22))}};
-/* nhạc nền ngũ cung tự soạn, nhỏ vừa phải */
-let mG=null,mT=null,mNext=0,mStep=0;const PENTA=[0,2,4,7,9,12,14,16];
-function musicOn(){const a=ac();if(!a)return;if(!mG){mG=a.createGain();mG.gain.value=.07;const dl=a.createDelay();dl.delayTime.value=.33;const fb=a.createGain();fb.gain.value=.28;mG.connect(a.destination);mG.connect(dl);dl.connect(fb).connect(dl);dl.connect(a.destination)}
- mNext=a.currentTime+.1;mStep=0;clearInterval(mT);mT=setInterval(()=>{while(mNext<a.currentTime+.4){const bar=Math.floor(mStep/8)%4,root=[57,53,55,52][bar];
-  if(mStep%8===0)tone(mNext,440*Math.pow(2,(root-12-69)/12),1.6,'sine',.5,mG);
-  if(Math.random()<.72){const n=root+PENTA[(Math.random()*PENTA.length)|0]+(mStep%4===0?0:12);tone(mNext,440*Math.pow(2,(n-69)/12),.7,'triangle',.35,mG)}
-  mNext+=.3;mStep++}},120);CFG.music=1;$('#bMusic').textContent='🎶'}
-function musicOff(){clearInterval(mT);CFG.music=0;$('#bMusic').textContent='🎵'}
+/* ===== NHẠC NỀN TÙY CHỈNH: nhạc tự soạn + nhạc của anh (lưu trên máy) ===== */
+const TRACKS=[{id:'nc',name:'Ngũ cung thư thái',step:.3,wave:'triangle',drum:0,bass:1},{id:'tt',name:'Trống trận sôi động',step:.17,wave:'square',drum:1,bass:1},{id:'tr',name:'Trà đạo tĩnh tâm',step:.5,wave:'sine',drum:0,bass:0},{id:'cc',name:'Cao thủ đối đầu',step:.21,wave:'sawtooth',drum:2,bass:1}];
+const MU=Object.assign({track:'nc',vol:35,mode:'all'},LS.get('xq_mu',{}));const saveMu=()=>LS.set('xq_mu',MU);
+let mG=null,mT=null,mNext=0,mStep=0,mAud=null,mUrl='',mFiles=[];const PENTA=[0,2,4,7,9,12,14,16];
+function idb(){return new Promise((ok,no)=>{try{const r=indexedDB.open('xqmusic',1);r.onupgradeneeded=()=>r.result.createObjectStore('f',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)}catch(e){no(e)}})}
+async function idbAll(){try{const d=await idb();return await new Promise(ok=>{const q=d.transaction('f').objectStore('f').getAll();q.onsuccess=()=>ok(q.result||[]);q.onerror=()=>ok([])})}catch(_){return []}}
+async function idbPut(o){const d=await idb();return new Promise((ok,no)=>{const t=d.transaction('f','readwrite');t.objectStore('f').put(o);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
+async function idbDel(id){try{const d=await idb();await new Promise(ok=>{const t=d.transaction('f','readwrite');t.objectStore('f').delete(id);t.oncomplete=ok;t.onerror=ok})}catch(_){}}
+const vol=()=>Math.max(0,Math.min(100,MU.vol))/100;
+function synthStop(){clearInterval(mT);mT=null}
+function audStop(){if(mAud){mAud.pause();mAud.removeAttribute('src');mAud=null}if(mUrl){URL.revokeObjectURL(mUrl);mUrl=''}}
+function musicStopAll(){synthStop();audStop()}
+function synthPlay(tr){const a=ac();if(!a)return;if(!mG){mG=a.createGain();const dl=a.createDelay();dl.delayTime.value=.33;const fb=a.createGain();fb.gain.value=.25;mG.connect(a.destination);mG.connect(dl);dl.connect(fb).connect(dl);dl.connect(a.destination)}
+ mG.gain.value=.2*vol();mNext=a.currentTime+.1;mStep=0;synthStop();
+ mT=setInterval(()=>{while(mNext<a.currentTime+.4){const bar=Math.floor(mStep/8)%4,root=[57,53,55,52][bar];
+  if(tr.bass&&mStep%8===0)tone(mNext,440*Math.pow(2,(root-12-69)/12),tr.step*6,'sine',.5,mG);
+  if(tr.drum&&mStep%4===0)tone(mNext,70,.18,'sine',tr.drum>1?.9:.7,mG);if(tr.drum>1&&mStep%4===2)tone(mNext,180,.08,'triangle',.3,mG);
+  if(Math.random()<(tr.drum?.85:.7)){const n=root+PENTA[(Math.random()*PENTA.length)|0]+(mStep%4===0?0:12);tone(mNext,440*Math.pow(2,(n-69)/12),tr.step*2.3,tr.wave,tr.wave==='sawtooth'||tr.wave==='square'?.12:.35,mG)}
+  mNext+=tr.step;mStep++}},120)}
+async function audPlay(f){audStop();mUrl=URL.createObjectURL(f.blob);mAud=new Audio(mUrl);mAud.volume=vol();mAud.loop=MU.mode==='one';
+ mAud.onended=()=>{if(MU.mode==='one'||!mFiles.length)return;let k=mFiles.findIndex(x=>x.id===f.id);k=MU.mode==='shuffle'?Math.floor(Math.random()*mFiles.length):(k+1)%mFiles.length;MU.track=mFiles[k].id;saveMu();audPlay(mFiles[k]);renderMu()};
+ try{await mAud.play()}catch(_){toast('Trình duyệt chưa cho phát nhạc, anh chạm vào màn hình rồi bấm Phát lại')}}
+async function musicOn(){ac();const tr=TRACKS.find(t=>t.id===MU.track);musicStopAll();
+ if(tr)synthPlay(tr);else{const f=mFiles.find(x=>x.id===MU.track);if(f)await audPlay(f);else{MU.track='nc';synthPlay(TRACKS[0])}}
+ CFG.music=1;saveCfg();$('#bMusic').textContent='🎶';$('#bMusic').classList.add('glow');renderMu()}
+function musicOff(){musicStopAll();CFG.music=0;saveCfg();$('#bMusic').textContent='🎵';$('#bMusic').classList.remove('glow');renderMu()}
+function renderMu(){const box=$('#muList');if(!box)return;const all=TRACKS.map(t=>({id:t.id,name:'🎼 '+t.name,own:0})).concat(mFiles.map(f=>({id:f.id,name:'🎵 '+f.name,own:1})));
+ box.innerHTML=all.map(t=>'<div class="rrow mut'+(t.id===MU.track?' on':'')+'" data-id="'+esc(t.id)+'"><b>'+esc(t.name)+(t.id===MU.track&&CFG.music?' ▶':'')+'</b>'+(t.own?'<button class="mini" data-del="'+esc(t.id)+'">Xóa</button>':'')+'</div>').join('');
+ box.querySelectorAll('.mut').forEach(r=>r.onclick=e=>{if(e.target.dataset.del)return;MU.track=r.dataset.id;saveMu();musicOn()});
+ box.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{await idbDel(b.dataset.del);mFiles=mFiles.filter(x=>x.id!==b.dataset.del);if(MU.track===b.dataset.del){MU.track='nc';saveMu();if(CFG.music)musicOn()}renderMu();toast('Đã xóa bài khỏi máy này')});
+ $('#muPlay').textContent=CFG.music?'⏸ Tạm dừng':'▶ Phát';$('#muVolV').textContent=MU.vol+'%'}
 /* ===== vẽ bàn cờ ===== */
 const cv=$('#cv'),g=cv.getContext('2d');let W=0,H=0,CS=0,MX=0,MY=0,DPR=1;
 function size(){const w=cv.parentElement.clientWidth;DPR=Math.min(3,window.devicePixelRatio||1);CS=w/9.4;W=w;H=CS*10.4;MX=CS*.7;MY=CS*.7;cv.width=W*DPR;cv.height=H*DPR;cv.style.height=H+'px';g.setTransform(DPR,0,0,DPR,0,0)}
@@ -363,7 +395,18 @@ let loseArm=0;$('#bLose').onclick=()=>{if(G.over||(G.mode==='online'&&!G.me))ret
 $('#bSet').onclick=()=>{$('#chg').innerHTML='Phiên bản '+VERSION+'<br>'+CHANGES.join('<br>');$('#mSet').classList.add('v')};
 $('#bSetOk').onclick=()=>{['pcs','skin','autoflip','showmv'].forEach(k=>{const v=$('#'+k).value;CFG[k]=/^\d$/.test(v)?+v:v});CFG.name=$('#myName').value.trim();saveCfg();boardImg=null;$('#mSet').classList.remove('v');setUI();netPresence()};
 $('#bUpd').onclick=()=>{toast('Đang tải bản mới nhất…');setTimeout(()=>location.reload(),600)};
-$('#bMusic').onclick=()=>{CFG.music?musicOff():musicOn();saveCfg()};
+$('#bMusic').onclick=()=>{ac();$('#mMusic').classList.add('v');renderMu()};
+$('#muPlay').onclick=()=>{CFG.music?musicOff():musicOn()};
+$('#muNext').onclick=()=>{const all=TRACKS.map(t=>t.id).concat(mFiles.map(f=>f.id));let k=all.indexOf(MU.track);k=MU.mode==='shuffle'?Math.floor(Math.random()*all.length):(k+1)%all.length;MU.track=all[k];saveMu();musicOn()};
+$('#muVol').value=MU.vol;$('#muVol').oninput=e=>{MU.vol=+e.target.value;saveMu();if(mG)mG.gain.value=.2*vol();if(mAud)mAud.volume=vol();$('#muVolV').textContent=MU.vol+'%'};
+$('#muMode').value=MU.mode;$('#muMode').onchange=e=>{MU.mode=e.target.value;saveMu();if(mAud)mAud.loop=MU.mode==='one'};
+$('#muFile').onchange=async e=>{const fs=[...(e.target.files||[])];let n=0;for(const f of fs){if(!/^audio\//.test(f.type)&&!/\.(mp3|m4a|aac|wav|ogg|flac)$/i.test(f.name))continue;if(f.size>60e6){toast(f.name+' quá 60 MB, bỏ qua',3500);continue}
+  const o={id:'u'+Date.now().toString(36)+n,name:f.name.replace(/\.[^.]+$/,'').slice(0,60),blob:f};try{await idbPut(o)}catch(_){toast('Máy này không lưu được nhạc, chỉ phát được trong lần mở này',4000)}mFiles.push(o);n++;if(n===1)MU.track=o.id}
+ e.target.value='';if(n){saveMu();toast('Đã thêm '+n+' bài nhạc của anh',3000);musicOn()}else toast('Chưa có tệp nhạc hợp lệ (mp3, m4a, wav, ogg)')};
+$('#muClose').onclick=()=>$('#mMusic').classList.remove('v');
+document.addEventListener('visibilitychange',()=>{if(!CFG.music)return;if(document.hidden){synthStop();if(mAud)mAud.pause()}else{const tr=TRACKS.find(t=>t.id===MU.track);if(tr)synthPlay(tr);else if(mAud)mAud.play().catch(()=>{})}});
+idbAll().then(l=>{mFiles=l;renderMu()});
+
 $('#bSnd').onclick=()=>{CFG.snd=CFG.snd?0:1;$('#bSnd').textContent=CFG.snd?'🔊':'🔇';saveCfg()};$('#bSnd').textContent=CFG.snd?'🔊':'🔇';
 /* pháo hoa thắng */
 function confetti(){const c=$('#conf'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;const ps=[];for(let i=0;i<160;i++)ps.push({x:c.width/2,y:c.height*.45,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,c:['#ffd54f','#ff7043','#e53935','#fff8e1','#66bb6a'][i%5],s:4+Math.random()*5,r:Math.random()*6});let n=0;(function f(){x.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.35;p.r+=.2;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);x.restore()});if(++n<150)requestAnimationFrame(f);else x.clearRect(0,0,c.width,c.height)})()}
