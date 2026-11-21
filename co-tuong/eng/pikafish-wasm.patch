@@ -1,0 +1,41 @@
+diff --git a/src/Makefile b/src/Makefile
+index 3e17841..0b02313 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -572,6 +572,8 @@ ifeq ($(COMP),clang)
+ 		endif
+ 	else ifeq ($(arch),loongarch64)
+ 		LDFLAGS += -latomic
++	else ifeq ($(arch),wasm32)
++		CXXFLAGS +=
+ 	else
+ 		CXXFLAGS += -m$(bits)
+ 		LDFLAGS += -m$(bits)
+diff --git a/src/uci.cpp b/src/uci.cpp
+index 219ec1e..53eda78 100644
+--- a/src/uci.cpp
++++ b/src/uci.cpp
+@@ -88,6 +88,11 @@ void UCIEngine::init_search_update_listeners() {
+     engine.set_on_verify_network([](const auto& s) { print_info_string(s); });
+ }
+ 
++#ifdef __EMSCRIPTEN__
++}  // namespace Stockfish
++bool wasm_getline(std::string& s);
++namespace Stockfish {
++#endif
+ void UCIEngine::loop() {
+     set_console_utf8();
+     std::string token, cmd;
+@@ -98,7 +103,11 @@ void UCIEngine::loop() {
+     do
+     {
+         if (cli.argc == 1
++#ifdef __EMSCRIPTEN__
++            && !wasm_getline(cmd))
++#else
+             && !getline(std::cin, cmd))  // Wait for an input or an end-of-file (EOF) indication
++#endif
+             cmd = "quit";
+ 
+         currentCmd = cmd;
