@@ -1,5 +1,5 @@
 /* Cờ Tướng Đạo Pro: lưu bản game để mở được khi mất mạng (chơi với máy). Trang chính luôn lấy bản mới từ mạng trước. */
-const V='xq-2.8.0';
+const V='xq-2.8.1';
 const HOME='/co-tuong/';
 const CORE=[HOME,HOME+'manifest.webmanifest',HOME+'icon-192.png',HOME+'icon-512.png',HOME+'apple-touch-icon.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
