@@ -120,10 +120,8 @@ $('bSend').onclick = async () => {
   if (!ch) { toast('Chưa ghép đôi máy tính'); $('code').focus(); return; }
   const name = $('name').value.trim(), script = $('script').value.trim();
   if (!script && !files.ref) return toast('Nhập kịch bản hoặc chọn video mẫu');
-  if (files.ref && !script && !$('apiKey').value.trim()) return toast('Cần khóa Gemini để máy hiểu video mẫu: bấm 🔑 Lấy khóa rồi dán vào');
   const id = 'j' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-  if ($('apiKey').value.trim()) put('vd13p_key', $('apiKey').value.trim());
-  const fields = { genre: $('genre').value, remake: $('remake').value, brief: $('brief').value, apiKey: $('apiKey').value.trim(), name, features: $('features').value, price: $('price').value, character: $('character').value, ratio: $('ratio').value, voice: 'speak', script, target: +$('target').value || 0, useRef: $('useRef').checked, keepChar: !files.char && !files.ref };
+    const fields = { genre: $('genre').value, remake: $('remake').value, brief: $('brief').value, name, features: $('features').value, price: $('price').value, character: $('character').value, ratio: $('ratio').value, voice: 'speak', script, target: +$('target').value || 0, useRef: $('useRef').checked, keepChar: !files.char && !files.ref };
   const list = [];
   if (files.char) list.push(new File([files.char], 'char_anh.jpg', { type: 'image/jpeg' }));
   if (files.prod) list.push(new File([files.prod], 'prod_anh.jpg', { type: 'image/jpeg' }));
@@ -177,7 +175,6 @@ if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catc
 document.addEventListener('visibilitychange', () => { if (!document.hidden && ch) { connect(); } });
 $('genre').onchange = () => { $('prodCard').querySelector('h2').textContent = $('genre').value === 'ad' ? '📦 Sản phẩm' : '👥 Nhân vật & nội dung'; };
 (function init() {
-  $('apiKey').value = get('vd13p_key');
   const h = VD13Link.cleanCode(decodeURIComponent(location.hash.slice(1)));
   if (h.length === 16) { put(K_CODE, h); history.replaceState(null, '', location.pathname); toast('Đã nhận mã ghép đôi từ máy tính'); }
   renderHist();
