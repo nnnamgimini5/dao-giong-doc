@@ -50,7 +50,7 @@ video{width:100%;max-height:70vh;border-radius:14px;background:#000;display:bloc
 <body>
 <header>
   <img src="icon-192.png" alt="">
-  <div style="flex:1"><h1>VD-13 · Video Giỏ Hàng</h1><div class="mu">ĐẠO PRO · điều khiển máy tính tạo video · bản 1.1</div></div>
+  <div style="flex:1"><h1>VD-13 · Video Giỏ Hàng</h1><div class="mu">ĐẠO PRO · điều khiển máy tính tạo video · bản 1.2</div></div>
   <span id="conn" class="pill">Chưa ghép</span>
 </header>
 <main>
@@ -69,9 +69,12 @@ video{width:100%;max-height:70vh;border-radius:14px;background:#000;display:bloc
     <select id="genre"><option value="ad">Quảng cáo sản phẩm (gắn giỏ hàng)</option><option value="drama">Phim ngắn / hội thoại nhiều nhân vật</option><option value="review">Review – nói trước camera</option><option value="free">Tự do theo video mẫu</option></select>
     <label>Cách làm từ video mẫu</label>
     <select id="remake"><option value="rewrite">Viết lời thoại MỚI cùng ý, nhân vật mới (khuyên dùng)</option><option value="same">Giữ nguyên lời thoại gốc</option><option value="new">Ý tưởng mới, chỉ học phong cách mẫu</option></select>
+    <div class="mu" style="margin:-4px 0 12px"><b>Quảng cáo</b>: giới thiệu, dùng sản phẩm, kêu gọi bấm giỏ hàng · <b>Phim ngắn</b>: nhiều nhân vật nói chuyện, có tình huống, cái kết · <b>Review</b>: một người nói thẳng vào camera · <b>Tự do</b>: theo tinh thần video mẫu.<br><b>Viết lời mới</b>: giữ cấu trúc, nhịp, kiểu ý của mẫu nhưng đổi lời và nhân vật (an toàn bản quyền) · <b>Giữ lời gốc</b>: chép nguyên văn (chỉ với video của chính anh) · <b>Ý tưởng mới</b>: chỉ học phong cách, nội dung theo yêu cầu thêm.</div>
+    <label><input type="checkbox" id="reviewFirst" checked> 👀 Duyệt kịch bản &amp; prompt trước khi tạo</label>
+    <div class="mu" style="margin:0 0 12px">Bật: Gemini viết xong kịch bản thì gửi về đây để anh xem, sửa prompt video/ảnh từng cảnh rồi bấm Duyệt mới tạo trên Flow (tránh tốn tín dụng vì prompt sai). Tắt: máy chạy thẳng A-Z.</div>
     <label>Yêu cầu thêm (tùy chọn)</label>
     <textarea id="brief" style="min-height:70px" placeholder="VD: đổi bối cảnh sang quán cà phê Sài Gòn, kết thúc có bất ngờ…"></textarea>
-    <p class="mu" style="margin:6px 0 0">Máy tính tự dùng tài khoản Gemini đang đăng nhập trong Chrome để xem video mẫu (lời thoại, nhân vật, cảnh) và viết kịch bản mới. Không cần khóa API.</p>
+    <p class="mu" style="margin:6px 0 0">Máy tính tự dùng <b>tài khoản Gemini đang đăng nhập trong Chrome của máy đó</b> để xem video mẫu và viết kịch bản, tạo clip bằng <b>tín dụng Flow</b> của tài khoản đó. Chia sẻ app cho người khác thì họ dùng tài khoản Gemini/Flow của chính họ. Không cần khóa API.</p>
   </div>
 
   <div class="card" id="prodCard">
@@ -109,6 +112,13 @@ video{width:100%;max-height:70vh;border-radius:14px;background:#000;display:bloc
     <h2>⏳ Tiến độ <span id="jobName" class="mu"></span></h2>
     <ul class="log" id="log"><li class="mu">Chưa có việc nào. Gửi lệnh ở trang Tạo video.</li></ul>
     <button class="bad" id="bStop" hidden>⛔ Dừng việc này</button>
+  </div>
+  <div class="card" id="revCard" hidden>
+    <h2>👀 Duyệt kịch bản &amp; prompt</h2>
+    <p class="mu" style="margin-top:0">Sửa trực tiếp prompt từng cảnh nếu cần, rồi bấm Duyệt. Máy tính sẽ tạo đúng theo nội dung ở đây.</p>
+    <div id="revList"></div>
+    <button class="ok wide" id="bApprove">✅ Duyệt &amp; tạo trên Flow</button>
+    <button class="bad" id="bReject" style="margin-top:8px">⛔ Hủy video này</button>
   </div>
   <div class="card" id="outCard" hidden>
     <h2>✅ Video thành phẩm</h2>

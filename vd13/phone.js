@@ -31,7 +31,7 @@ async function connect() {
   $('code').value = code;
   if (sub) sub.stop();
   try { ch = await VD13Link.open(code); } catch (e) { $('pairMsg').textContent = e.message; return; }
-  const open = jobs.filter(j => j.state === 'sent' || j.state === 'run').map(j => j.at);
+  const open = jobs.filter(j => j.state === 'sent' || j.state === 'run' || j.state === 'review').map(j => j.at);
   const since = open.length ? String(Math.floor(Math.min(...open) / 1000) - 60) : '2m';
   sub = ch.listen(onMsg, { since, onState: s => { if (s === 'off') pill('wait', 'Đang nối lại…'); } });
   ping();
@@ -62,9 +62,15 @@ async function onMsg(m) {
   if ((j.mids || []).includes(m.mid)) return; j.mids = (j.mids || []).concat(m.mid).slice(-80);
   if (m.kind === 'st') {
     if (j.state === 'done' || j.state === 'err') return;
-    j.state = 'run'; j.log = (j.log || []).concat({ t: m.obj.at || Date.now(), x: m.obj.text }).slice(-60); saveJobs();
+    if (j.state !== 'review') j.state = 'run'; j.log = (j.log || []).concat({ t: m.obj.at || Date.now(), x: m.obj.text }).slice(-60); saveJobs();
     if (curJob === j.id) renderLog(j);
     pill('on', 'Đang tạo video');
+  }
+  if (m.kind === 'review') {
+    if (j.state === 'done' || j.state === 'err') return;
+    j.state = 'review'; j.review = m.obj.scenes || []; j.log = (j.log || []).concat({ t: Date.now(), x: '👀 Kịch bản xong, chờ anh duyệt prompt' }); saveJobs();
+    notify('Chờ anh duyệt', `"${j.name}" đã có kịch bản ${j.review.length} cảnh`);
+    showJob(j.id); page('pgRun');
   }
   if (m.kind === 'done') {
     if (j.state === 'done') return;
@@ -121,7 +127,7 @@ $('bSend').onclick = async () => {
   const name = $('name').value.trim(), script = $('script').value.trim();
   if (!script && !files.ref) return toast('Nhập kịch bản hoặc chọn video mẫu');
   const id = 'j' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    const fields = { genre: $('genre').value, remake: $('remake').value, brief: $('brief').value, name, features: $('features').value, price: $('price').value, character: $('character').value, ratio: $('ratio').value, voice: 'speak', script, target: +$('target').value || 0, useRef: $('useRef').checked, keepChar: !files.char && !files.ref };
+    const fields = { reviewFirst: $('reviewFirst').checked, genre: $('genre').value, remake: $('remake').value, brief: $('brief').value, name, features: $('features').value, price: $('price').value, character: $('character').value, ratio: $('ratio').value, voice: 'speak', script, target: +$('target').value || 0, useRef: $('useRef').checked, keepChar: !files.char && !files.ref };
   const list = [];
   if (files.char) list.push(new File([files.char], 'char_anh.jpg', { type: 'image/jpeg' }));
   if (files.prod) list.push(new File([files.prod], 'prod_anh.jpg', { type: 'image/jpeg' }));
@@ -139,10 +145,28 @@ $('bSend').onclick = async () => {
 $('bStop').onclick = async () => { const j = jobOf(curJob); if (!j || !confirm('Dừng tạo video này?')) return; try { await ch.send('phone', 'stop', j.id, {}); toast('Đã gửi lệnh dừng'); } catch (e) { toast(e.message); } };
 
 // ---- Hiển thị ----
+function renderReview(j) {
+  const show = j.state === 'review' && (j.review || []).length;
+  $('revCard').hidden = !show; if (!show) return;
+  $('revList').innerHTML = j.review.map(x => `<div style="border-top:1px solid var(--line);padding-top:10px;margin-top:10px">
+    <b>Cảnh ${x.i + 1}</b><div class="mu">${esc(x.action)}</div>${x.voiceover ? `<div class="mu">🎙️ ${esc(x.voiceover)}</div>` : ''}
+    <label style="margin-top:6px">Prompt video</label><textarea data-rv="${x.i}" data-k="video">${esc(x.video)}</textarea>
+    <label>Prompt hình ảnh / khung đầu</label><textarea data-rv="${x.i}" data-k="image" style="min-height:70px">${esc(x.image)}</textarea></div>`).join('');
+}
+$('bApprove').onclick = async () => {
+  const j = jobOf(curJob); if (!j || !j.review) return;
+  document.querySelectorAll('[data-rv]').forEach(t => { const x = j.review.find(r => r.i === +t.dataset.rv); if (x) x[t.dataset.k] = t.value; });
+  const b = $('bApprove'); b.disabled = true; b.textContent = '⏳ Đang gửi…';
+  try { await ch.send('phone', 'approve', j.id, { scenes: j.review.map(x => ({ i: x.i, video: x.video, image: x.image })) }); j.state = 'run'; j.log = (j.log || []).concat({ t: Date.now(), x: '✅ Anh đã duyệt, máy tính bắt đầu tạo trên Flow' }); saveJobs(); renderLog(j); toast('Đã duyệt, máy tính bắt đầu tạo'); }
+  catch (e) { toast('Chưa gửi được: ' + e.message); }
+  finally { b.disabled = false; b.textContent = '✅ Duyệt & tạo trên Flow'; }
+};
+$('bReject').onclick = async () => { const j = jobOf(curJob); if (!j || !confirm('Hủy video này?')) return; try { await ch.send('phone', 'stop', j.id, {}); j.state = 'err'; j.msg = 'Anh đã hủy ở bước duyệt'; saveJobs(); renderLog(j); } catch (e) { toast(e.message); } };
 function renderLog(j) {
+  renderReview(j);
   $('jobName').textContent = '· ' + j.name;
   $('log').innerHTML = (j.log || []).slice().reverse().map(l => `<li><time>${fmtT(l.t)}</time>${esc(l.x)}</li>`).join('') || '<li class="mu">Chưa có tin.</li>';
-  $('bStop').hidden = !(j.state === 'sent' || j.state === 'run');
+  $('bStop').hidden = !(j.state === 'sent' || j.state === 'run' || j.state === 'review');
 }
 let outUrl = '';
 async function showJob(id) {
@@ -157,7 +181,7 @@ async function showJob(id) {
   };
 }
 function renderHist() {
-  const icon = { sent: '📤', run: '⏳', done: '✅', err: '❌' };
+  const icon = { sent: '📤', run: '⏳', review: '👀', done: '✅', err: '❌' };
   $('hist').innerHTML = jobs.slice().reverse().map(j => `<li><b>${icon[j.state] || '•'}</b><span>${esc(j.name)}<br><small class="mu">${fmtD(j.at)}${j.size ? ' · ' + (j.size / 1048576).toFixed(1) + ' MB' : ''}${j.msg ? ' · ' + esc(j.msg) : ''}</small></span><button data-open="${j.id}">Xem</button><button data-del="${j.id}">🗑️</button></li>`).join('') || '<li class="mu">Chưa có video nào.</li>';
 }
 document.addEventListener('click', e => {
