@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>VD-13 · Video Giỏ Hàng</title>
+<meta name="theme-color" content="#080d1a">
+<meta name="description" content="Ra lệnh từ điện thoại cho máy tính tự tạo video quảng cáo gắn giỏ hàng trên Google Flow và nhận video thành phẩm.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VD-13 Video">
+<style>
+:root{--bg:#080d1a;--card:rgba(30,41,59,.66);--in:#0a1120;--line:rgba(148,163,184,.22);--tx:#f8fafc;--mu:#9fb0c8;--a:#38bdf8;--g:#22c55e;--o:#fb923c;--r:#f87171}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--tx);line-height:1.5;min-height:100vh;
+background:radial-gradient(500px 360px at 0% -5%,#0c4a6e99,transparent 70%),radial-gradient(420px 320px at 100% 10%,#7c2d1288,transparent 70%),var(--bg);background-attachment:fixed;
+padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+header{max-width:640px;margin:auto;padding:14px 14px 6px;display:flex;gap:12px;align-items:center}
+header img{width:44px;height:44px;border-radius:12px}h1{font-size:1.08rem;margin:0}.mu{color:var(--mu);font-size:.85rem}
+main{max-width:640px;margin:auto;padding:6px 12px 90px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;backdrop-filter:blur(8px);animation:in .35s}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+h2{font-size:1rem;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+label{display:block;font-weight:600;font-size:.86rem;margin:0 0 4px}
+input,textarea,select{width:100%;background:var(--in);color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:11px;font:inherit;font-size:16px;margin-bottom:12px}
+textarea{min-height:120px;resize:vertical}input[type=checkbox]{width:auto;margin:0 8px 0 0;transform:scale(1.2)}
+button,.btn{background:#334155;color:var(--tx);border:0;border-radius:12px;padding:12px 16px;font-weight:700;font-size:.95rem;cursor:pointer;margin:0 6px 6px 0;display:inline-flex;gap:6px;align-items:center;text-decoration:none}
+button:active{transform:scale(.96)}button:disabled{opacity:.45}
+.pri{background:var(--a);color:#04101d}.ok{background:var(--g);color:#052e16}.bad{background:#7f1d1d}.wide{width:100%;justify-content:center;font-size:1.05rem;padding:14px}
+.row{display:flex;gap:8px;align-items:center}.row input{flex:1;margin:0}.row button{margin:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.8rem;font-weight:700;background:#334155}
+.pill.on{background:rgba(34,197,94,.22);color:#86efac}.pill.off{background:rgba(248,113,113,.18);color:#fca5a5}.pill.wait{background:rgba(251,146,60,.2);color:#fdba74}
+.log{list-style:none;margin:0;padding:0;max-height:300px;overflow:auto}.log li{padding:8px 0;border-top:1px solid var(--line);font-size:.9rem}.log li:first-child{border-top:0}.log time{color:var(--mu);font-size:.78rem;margin-right:6px}
+video{width:100%;max-height:70vh;border-radius:14px;background:#000;display:block;margin-bottom:10px}
+.file{display:flex;align-items:center;gap:10px;margin:-4px 0 12px;font-size:.85rem;color:var(--mu)}.file img{width:52px;height:52px;object-fit:cover;border-radius:10px}
+.hist{list-style:none;margin:0;padding:0}.hist li{display:flex;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:.9rem}.hist li:first-child{border-top:0}.hist li span{flex:1}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:#080d1af2;backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:5}
+.tabs button{flex:1;flex-direction:column;gap:0;background:none;font-size:.72rem;margin:0;padding:6px 2px;color:var(--mu)}.tabs button b{font-size:1.3rem;line-height:1.2}.tabs button.on{color:var(--a)}
+.page{display:none}.page.on{display:block}
+.steps{margin:0;padding-left:20px;font-size:.88rem}.steps li{margin-bottom:6px}
+#toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,150%);background:var(--g);color:#052e16;padding:10px 18px;border-radius:99px;font-weight:700;transition:.3s;opacity:0;z-index:9;max-width:90vw;text-align:center}
+#toast.show{transform:translate(-50%,0);opacity:1}
+.warn{color:var(--o);font-size:.85rem}
+</style>
+</head>
+<body>
+<header>
+  <img src="icon-192.png" alt="">
+  <div style="flex:1"><h1>VD-13 · Video Giỏ Hàng</h1><div class="mu">ĐẠO PRO · điều khiển máy tính tạo video · bản 1.0</div></div>
+  <span id="conn" class="pill">Chưa ghép</span>
+</header>
+<main>
+<!-- Trang 1: Tạo video -->
+<section class="page on" id="pgNew">
+  <div class="card" id="pairCard">
+    <h2>🔗 Ghép đôi máy tính</h2>
+    <p class="mu" style="margin-top:0">Trên máy tính: mở app VD-13 trong Chrome → thẻ <b>📱 Điều khiển từ điện thoại</b> → tích <b>Nhận lệnh</b> → quét mã QR bằng camera, hoặc nhập mã 16 ký tự vào đây.</p>
+    <div class="row"><input id="code" placeholder="XXXX-XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off"><button class="pri" id="bPair">Kết nối</button></div>
+    <div id="pairMsg" class="mu" style="margin-top:8px"></div>
+  </div>
+
+  <div class="card">
+    <h2>📦 Sản phẩm</h2>
+    <label>Tên sản phẩm</label><input id="name" placeholder="VD: Nước hoa mini Lancôme">
+    <label>Điểm nổi bật (mỗi dòng một ý)</label><textarea id="features" style="min-height:80px"></textarea>
+    <div class="grid">
+      <div><label>Giá bán (đồng)</label><input id="price" inputmode="numeric" placeholder="119.000"></div>
+      <div><label>Khung hình</label><select id="ratio"><option value="9:16">Dọc 9:16</option><option value="16:9">Ngang 16:9</option></select></div>
+    </div>
+    <label>Nhân vật (mô tả, để trống nếu không có người)</label><input id="character" placeholder="VD: Người mẫu ảo nữ Việt Nam, tóc nâu dài">
+    <label>Ảnh nhân vật / ảnh bắt đầu chung (khuyên dùng để mọi cảnh cùng một gương mặt)</label>
+    <input type="file" id="fChar" accept="image/*"><div class="file" id="vChar" hidden></div>
+    <label>Ảnh sản phẩm (tùy chọn, hiện ở cảnh cuối)</label>
+    <input type="file" id="fProd" accept="image/*"><div class="file" id="vProd" hidden></div>
+  </div>
+
+  <div class="card">
+    <h2>🎬 Kịch bản hoặc video mẫu</h2>
+    <label>Video mẫu (tùy chọn, dưới 14 MB): máy tính tự chia cảnh theo video</label>
+    <input type="file" id="fRef" accept="video/*"><div class="file" id="vRef" hidden></div>
+    <label><input type="checkbox" id="useRef"> Dùng ảnh đầu cảnh cắt từ video mẫu khi không có ảnh nhân vật <b>(chỉ khi người trong video mẫu đã đồng ý)</b></label>
+    <label style="margin-top:10px">Kịch bản (bỏ trống nếu đã chọn video mẫu)</label>
+    <textarea id="script" placeholder="Cảnh 1: Cầm chai nước hoa đưa gần ống kính&#10;Lời thoại: Thích mùi Lancôme mà không muốn bỏ bốn năm triệu…&#10;&#10;Cảnh 2: …"></textarea>
+    <button type="button" id="bSample">📄 Chèn kịch bản mẫu</button>
+    <label style="margin-top:8px">Tổng thời lượng thành phẩm (giây, 0 = theo số cảnh)</label><input id="target" type="number" min="0" step="0.1" value="0">
+    <button class="ok wide" id="bSend">🚀 Gửi máy tính tạo video</button>
+    <p class="mu" style="margin:6px 0 0">Mỗi cảnh 8 giây trừ tín dụng Google Flow của tài khoản trên máy tính.</p>
+  </div>
+</section>
+
+<!-- Trang 2: Tiến độ & kết quả -->
+<section class="page" id="pgRun">
+  <div class="card">
+    <h2>⏳ Tiến độ <span id="jobName" class="mu"></span></h2>
+    <ul class="log" id="log"><li class="mu">Chưa có việc nào. Gửi lệnh ở trang Tạo video.</li></ul>
+    <button class="bad" id="bStop" hidden>⛔ Dừng việc này</button>
+  </div>
+  <div class="card" id="outCard" hidden>
+    <h2>✅ Video thành phẩm</h2>
+    <video id="out" controls playsinline></video>
+    <a class="btn ok" id="bSave" download>💾 Lưu về máy</a>
+    <button class="pri" id="bShare">📤 Chia sẻ / đăng</button>
+  </div>
+</section>
+
+<!-- Trang 3: Lịch sử -->
+<section class="page" id="pgHist">
+  <div class="card"><h2>🗂️ Video đã làm</h2><ul class="hist" id="hist"></ul></div>
+</section>
+
+<!-- Trang 4: Hướng dẫn -->
+<section class="page" id="pgHelp">
+  <div class="card">
+    <h2>📲 Cài app lên màn hình</h2>
+    <button class="ok" id="bInstall" hidden>⬇️ Cài app ngay</button>
+    <ol class="steps">
+      <li><b>Android (Chrome):</b> bấm nút Cài app ở trên, hoặc menu ⋮ → <b>Thêm vào màn hình chính / Cài đặt ứng dụng</b>.</li>
+      <li><b>iPhone (Safari):</b> bấm nút Chia sẻ ⬆️ → <b>Thêm vào MH chính</b>.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h2>💻 Chuẩn bị máy tính (một lần)</h2>
+    <ol class="steps">
+      <li>Cài Chrome, đăng nhập Google Flow (labs.google/flow) bằng tài khoản có tín dụng.</li>
+      <li>Cài tiện ích VD-13: giải nén thư mục <b>tien-ich-chrome</b> → Chrome mở <b>chrome://extensions</b> → bật <b>Chế độ nhà phát triển</b> → <b>Tải tiện ích đã giải nén</b> → chọn thư mục.</li>
+      <li>Bấm biểu tượng VD-13 trên Chrome → thẻ <b>📱 Điều khiển từ điện thoại</b> → tích <b>Nhận lệnh</b> → quét QR bằng điện thoại.</li>
+      <li>Để Chrome mở (không thu nhỏ), cắm sạc, tắt chế độ ngủ của máy khi đang tạo video.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h2>🔒 Bảo mật</h2>
+    <p class="mu" style="margin:0">Lệnh và video đi qua máy chủ chuyển tin công cộng ntfy.sh, được mã hóa bằng mã ghép đôi (máy chủ không đọc được), tự xóa sau khoảng 3 giờ. Ai có mã ghép đôi đều ra lệnh được cho máy tính, nên đừng chia sẻ mã; muốn thu hồi thì bấm <b>Đổi mã</b> trên máy tính.</p>
+    <button id="bForget" style="margin-top:10px">🗑️ Quên mã trên điện thoại này</button>
+  </div>
+</section>
+</main>
+<nav class="tabs">
+  <button data-p="pgNew" class="on"><b>🎬</b>Tạo video</button>
+  <button data-p="pgRun"><b>⏳</b>Tiến độ</button>
+  <button data-p="pgHist"><b>🗂️</b>Đã làm</button>
+  <button data-p="pgHelp"><b>📲</b>Hướng dẫn</button>
+</nav>
+<div id="toast"></div>
+<script src="vd13link.js"></script>
+<script src="phone.js"></script>
+</body>
+</html>

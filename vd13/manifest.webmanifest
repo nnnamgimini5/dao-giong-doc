@@ -1,0 +1,16 @@
+{
+  "name": "VD-13 · Video Giỏ Hàng",
+  "short_name": "VD-13 Video",
+  "description": "Ra lệnh từ điện thoại cho máy tính tự tạo video quảng cáo gắn giỏ hàng và nhận video thành phẩm.",
+  "lang": "vi",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080d1a",
+  "theme_color": "#080d1a",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
