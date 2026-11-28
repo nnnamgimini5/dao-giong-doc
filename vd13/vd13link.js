@@ -42,17 +42,32 @@
         if (body.length < 3800) { const r = await fetch(`${HOST}/${topic}`, { method: 'POST', body }); if (!r.ok) throw new Error('Máy chủ chuyển tin từ chối (' + r.status + ')'); return; }
       }
       const data = await enc(await pack(obj, files));
-      if (data.length > 15 * 1024 * 1024 - 1024) throw new Error(`Dữ liệu ${(data.length / 1048576).toFixed(1)} MB vượt giới hạn 15 MB của kênh chuyển`);
-      const r = await fetch(`${HOST}/${topic}`, { method: 'PUT', body: data, headers: { 'Filename': kind + '.bin', 'X-Message': head } });
-      if (!r.ok) throw new Error('Máy chủ chuyển tin từ chối file (' + r.status + ')');
+      if (data.length > 18 * 1048576) throw new Error(`Dữ liệu ${(data.length / 1048576).toFixed(1)} MB quá lớn (tối đa khoảng 18 MB mỗi lần)`);
+      // ntfy.sh miễn phí: mỗi file tối đa 2 MB → cắt thành nhiều phần 1,9 MB
+      const PART = 1900 * 1024, n = Math.max(1, Math.ceil(data.length / PART));
+      for (let i = 0; i < n; i++) {
+        const r = await fetch(`${HOST}/${topic}`, { method: 'PUT', body: data.subarray(i * PART, Math.min(data.length, (i + 1) * PART)), headers: { 'Filename': `${kind}_${i + 1}.bin`, 'X-Message': head + `p=${i + 1}/${n}` } });
+        if (!r.ok) { let t = ''; try { t = (await r.json()).error || ''; } catch (e) {} throw new Error(`Máy chủ chuyển tin từ chối phần ${i + 1}/${n} (${r.status}${t ? ': ' + t : ''})`); }
+      }
     }
 
+    const parts0 = new Map();
     async function read(m) {
       const parts = (m.message || '').split('|'); if (parts[0] !== 'vd13') return null;
       const [, from, kind, id] = parts; let obj;
       if (m.attachment && m.attachment.url) {
         const r = await fetch(m.attachment.url); if (!r.ok) throw new Error('File đã hết hạn trên máy chủ chuyển tin');
-        obj = unpack(await dec(await r.arrayBuffer()));
+        const buf = new Uint8Array(await r.arrayBuffer());
+        const pm = (parts[4] || '').match(/^p=(\d+)\/(\d+)$/);
+        let all = buf;
+        if (pm && +pm[2] > 1) {
+          const key = `${from}|${kind}|${id}`, n = +pm[2];
+          const arr = parts0.get(key) || new Array(n); arr[+pm[1] - 1] = buf; parts0.set(key, arr);
+          if (arr.filter(Boolean).length < n) return null;
+          parts0.delete(key);
+          all = new Uint8Array(arr.reduce((t, a) => t + a.length, 0)); let o = 0; for (const a of arr) { all.set(a, o); o += a.length; }
+        }
+        obj = unpack(await dec(all));
       } else obj = JSON.parse(td.decode(await dec(unb64(parts.slice(4).join('|')))));
       return { from, kind, id, obj, time: m.time, mid: m.id };
     }

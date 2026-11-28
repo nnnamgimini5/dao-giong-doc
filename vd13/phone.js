@@ -100,7 +100,7 @@ $('fChar').onchange = async e => { const f = e.target.files[0]; files.char = f ?
 $('fProd').onchange = async e => { const f = e.target.files[0]; files.prod = f ? await shrink(f, 1080) : null; preview('prod', files.prod); };
 $('fRef').onchange = e => {
   const f = e.target.files[0] || null;
-  if (f && f.size > 14 * 1048576) { toast(`Video ${(f.size / 1048576).toFixed(1)} MB lớn quá (tối đa 14 MB). Hãy cắt ngắn hoặc giảm chất lượng.`); e.target.value = ''; return; }
+  if (f && f.size > 12 * 1048576) { toast(`Video ${(f.size / 1048576).toFixed(1)} MB lớn quá (tối đa 12 MB). Hãy cắt ngắn hoặc giảm chất lượng.`); e.target.value = ''; return; }
   files.ref = f; preview('ref', f);
 };
 $('bSample').onclick = () => { $('script').value = `Cảnh 1: Nhân vật cầm sản phẩm đưa gần ống kính, mỉm cười
