@@ -1,0 +1,18 @@
+/* Bổ sung v2.3.0: nhân bản giọng, đồng bộ GitHub, cài app */
+.file-btn{position:relative;cursor:pointer}
+.install-help{position:relative;z-index:2;margin:10px 14px 0}
+.install-help .plain-list{margin:8px 0 12px}
+#panel-clone audio{width:100%;margin-top:10px}
+#panel-clone .input-row .input{flex:1;min-width:0}
+details.card>summary{cursor:pointer;list-style:none;display:flex;align-items:center;min-height:44px}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary::after{content:"▾";margin-left:auto;color:var(--muted);transition:transform .2s}
+details.card[open]>summary::after{transform:rotate(180deg)}
+.inline-h3{margin:0;font-size:inherit}
+.map-box{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;background:rgba(10,8,30,.45);border:1px solid var(--card-b);border-radius:12px;padding:10px 12px;margin:10px 0 0;color:var(--muted)}
+.small{font-size:13px}
+#gh-link{color:var(--blue)}
+@media (max-width:480px){
+  .tab-bar .nav-tab{font-size:12px;padding:0 2px}
+  .tab-bar .tab-name{white-space:nowrap}
+}

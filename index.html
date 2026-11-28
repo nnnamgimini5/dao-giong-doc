@@ -5,7 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#14102b">
   <title>Đạo pro tạo giọng đọc tùy chỉnh</title>
+  <meta name="description" content="Tạo giọng đọc tiếng Việt, nhân bản giọng từ file ghi âm, đồng bộ qua GitHub.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Giọng đọc">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="extra.css">
+  <script src="pwa.js"></script>
 </head>
 <body>
   <div class="bg-waves" aria-hidden="true"></div>
@@ -19,6 +29,9 @@
       </div>
     </div>
     <div class="header-actions">
+      <button type="button" id="btn-install" class="btn-header btn-install" hidden title="Cài app lên màn hình điện thoại">
+        <span aria-hidden="true">📲</span><span class="btn-label">Cài app</span>
+      </button>
       <button type="button" id="btn-music-toggle" class="btn-header" aria-pressed="false" title="Bật hoặc tắt nhạc nền">
         <span id="music-icon" aria-hidden="true">🔇</span>
         <span id="music-label" class="btn-label">Nhạc nền: Tắt</span>
@@ -27,13 +40,23 @@
       <button type="button" id="btn-check-update" class="btn-header" title="Kiểm tra phiên bản mới và làm mới ứng dụng">
         <span aria-hidden="true">🔄</span>
         <span class="btn-label">Cập nhật</span>
-        <span id="app-version-badge" class="version-badge">v2.2.1</span>
+        <span id="app-version-badge" class="version-badge">v2.3.0</span>
       </button>
     </div>
   </header>
 
+  <div id="install-help" class="install-help card" hidden>
+    <strong>Cài app lên màn hình chính</strong>
+    <ul class="plain-list">
+      <li><b>iPhone (Safari):</b> bấm nút Chia sẻ ⬆️ rồi chọn "Thêm vào MH chính".</li>
+      <li><b>Android (Chrome):</b> bấm menu ⋮ rồi chọn "Cài đặt ứng dụng" hoặc "Thêm vào màn hình chính".</li>
+    </ul>
+    <button type="button" id="install-help-close" class="btn">Đã hiểu</button>
+  </div>
+
   <nav class="tab-bar" aria-label="Các khu vực của ứng dụng">
     <button type="button" class="nav-tab active" data-tab="tts"><span class="tab-ico" aria-hidden="true">🎙️</span><span class="tab-name">Tạo giọng</span></button>
+    <button type="button" class="nav-tab" data-tab="clone"><span class="tab-ico" aria-hidden="true">🧬</span><span class="tab-name">Nhân bản</span></button>
     <button type="button" class="nav-tab" data-tab="script"><span class="tab-ico" aria-hidden="true">📜</span><span class="tab-name">Kịch bản</span></button>
     <button type="button" class="nav-tab" data-tab="fav"><span class="tab-ico" aria-hidden="true">⭐</span><span class="tab-name">Yêu thích</span></button>
     <button type="button" class="nav-tab" data-tab="settings"><span class="tab-ico" aria-hidden="true">⚙️</span><span class="tab-name">Giọng</span></button>
@@ -96,6 +119,76 @@
       </div>
     </section>
 
+    <section class="tab-panel" id="panel-clone" aria-labelledby="h-clone">
+      <h2 id="h-clone"><span aria-hidden="true">🧬</span> Nhân bản giọng</h2>
+      <p class="hint">Ghi âm hoặc tải file giọng mẫu dài 8 đến 30 giây, app sẽ đọc chữ bất kỳ bằng giọng đó. Chạy miễn phí trên máy chủ Hugging Face nên đôi khi phải chờ hàng đợi.</p>
+
+      <div class="card">
+        <h3>1. Giọng mẫu</h3>
+        <div class="btn-row">
+          <button type="button" id="btn-clone-rec" class="btn btn-primary">🎤 Ghi âm</button>
+          <label class="btn file-btn">📁 Tải file âm thanh<input type="file" id="clone-file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.webm,.flac" hidden></label>
+        </div>
+        <p id="clone-sample-status" class="status" role="status" aria-live="polite"></p>
+        <audio id="clone-sample-audio" controls hidden></audio>
+
+        <label class="field-label" for="clone-ref-text">Câu chữ đúng với lời trong mẫu (nên nhập)</label>
+        <textarea id="clone-ref-text" class="input textarea" rows="3" placeholder="Gõ lại đúng từng chữ người trong mẫu đã nói. Nhập đúng thì giọng nhân bản giống hơn."></textarea>
+
+        <label class="field-label" for="clone-name">Tên giọng</label>
+        <div class="input-row">
+          <input type="text" id="clone-name" class="input" placeholder="Ví dụ: Giọng anh Đạo" maxlength="60">
+          <button type="button" id="btn-clone-save" class="btn btn-primary">💾 Lưu giọng</button>
+        </div>
+        <p class="note note-info">Mẹo: ghi nơi yên tĩnh, đọc tự nhiên, không nhạc nền. Chỉ nhân bản giọng của chính anh hoặc người đã đồng ý.</p>
+      </div>
+
+      <div class="card">
+        <h3>2. Giọng đã lưu</h3>
+        <p id="clone-empty" class="empty">Chưa có giọng nhân bản nào.</p>
+        <div id="clone-list" class="row-list"></div>
+      </div>
+
+      <div class="card">
+        <h3>3. Đọc bằng giọng nhân bản</h3>
+        <label class="field-label" for="clone-voice">Giọng</label>
+        <select id="clone-voice" class="input"></select>
+        <label class="field-label" for="clone-gen-text">Nội dung cần đọc</label>
+        <textarea id="clone-gen-text" class="input textarea" rows="5" placeholder="Nhập hoặc dán đoạn văn. Đoạn dài được tự chia nhỏ rồi ghép lại."></textarea>
+        <div class="slider-block">
+          <div class="slider-head"><label for="clone-speed">Tốc độ</label><output id="clone-speed-val" for="clone-speed">1</output></div>
+          <input type="range" id="clone-speed" class="slider" min="0.6" max="1.5" step="0.05" value="1">
+        </div>
+        <button type="button" id="btn-clone-gen" class="btn btn-primary btn-big">🧬 Đọc bằng giọng nhân bản</button>
+        <div id="clone-progress" class="progress" hidden><div id="clone-progress-bar" class="progress-bar"></div></div>
+        <p id="clone-gen-status" class="status" role="status" aria-live="polite"></p>
+        <audio id="clone-audio" controls hidden></audio>
+        <div class="btn-row">
+          <button type="button" id="btn-clone-dl-mp3" class="btn btn-primary" disabled>⬇️ Tải mp3</button>
+          <button type="button" id="btn-clone-dl" class="btn" disabled>⬇️ Tải wav</button>
+        </div>
+      </div>
+
+      <details class="card">
+        <summary><h3 class="inline-h3">⚙️ Máy chủ nhân bản (nâng cao)</h3></summary>
+        <p class="hint">Space Gradio trên Hugging Face, có ô âm thanh mẫu và ô chữ cần đọc. App tự dò cách gọi.</p>
+        <label class="field-label" for="clone-space">Tên Space</label>
+        <input type="text" id="clone-space" class="input" list="clone-space-list" placeholder="ten-nguoi/ten-space" autocomplete="off" spellcheck="false">
+        <datalist id="clone-space-list">
+          <option value="hynt/F5-TTS-Vietnamese-100h">
+          <option value="pnnbao-ump/VieNeu-TTS">
+        </datalist>
+        <label class="field-label" for="clone-hf-token">Khóa Hugging Face (không bắt buộc)</label>
+        <input type="password" id="clone-hf-token" class="input" placeholder="hf_... (giúp có thêm lượt GPU miễn phí)" autocomplete="off" spellcheck="false">
+        <div class="btn-row">
+          <button type="button" id="btn-clone-save-server" class="btn btn-primary">💾 Lưu và kiểm tra</button>
+          <button type="button" id="btn-clone-swap" class="btn" hidden>🔀 Đổi chỗ 2 ô chữ</button>
+        </div>
+        <p id="clone-server-status" class="status" role="status" aria-live="polite"></p>
+        <pre id="clone-map" class="map-box" hidden></pre>
+      </details>
+    </section>
+
     <section class="tab-panel" id="panel-script" aria-labelledby="h-script">
       <h2 id="h-script"><span aria-hidden="true">📜</span> Kịch bản nhiều dòng</h2>
       <p class="hint">Mỗi dòng là một câu. Dùng giọng và thông số đang chọn ở tab Tạo giọng.</p>
@@ -131,9 +224,26 @@
         <button type="button" id="btn-clear-cache" class="btn btn-danger">🗑️ Xóa mô hình đã tải</button>
       </div>
       <div class="card">
+        <h3>☁️ Đồng bộ qua GitHub</h3>
+        <p class="hint">Lưu giọng nhân bản, giọng yêu thích và kịch bản vào một repo riêng tư của anh, để máy khác kéo về dùng được.</p>
+        <label class="field-label" for="gh-token">Khóa GitHub (fine-grained token, quyền Contents: Read and write)</label>
+        <input type="password" id="gh-token" class="input" placeholder="github_pat_..." autocomplete="off" spellcheck="false">
+        <label class="field-label" for="gh-repo">Repo lưu dữ liệu</label>
+        <input type="text" id="gh-repo" class="input" placeholder="ten-tai-khoan/giong-doc-data" autocomplete="off" spellcheck="false">
+        <p class="note note-info">Repo chưa có thì app tự tạo repo riêng tư (khóa cần thêm quyền Administration: Read and write). Khóa chỉ lưu trên máy này, không đẩy lên GitHub.</p>
+        <div class="btn-row">
+          <button type="button" id="btn-gh-push" class="btn btn-primary gh-btn">⬆️ Đẩy lên (máy này → GitHub)</button>
+          <button type="button" id="btn-gh-pull" class="btn gh-btn">⬇️ Kéo về (GitHub → máy này)</button>
+        </div>
+        <p id="gh-status" class="status" role="status" aria-live="polite"></p>
+        <p class="muted small"><span id="gh-last"></span> <a id="gh-link" href="#" target="_blank" rel="noopener" hidden>Mở repo ↗</a></p>
+        <button type="button" id="btn-gh-forget" class="btn btn-danger">🔑 Xóa khóa GitHub khỏi máy</button>
+      </div>
+      <div class="card">
         <h3>Giới hạn cần biết</h3>
         <ul class="plain-list">
-          <li>Không nhân bản giọng từ file ghi âm: việc này không làm được miễn phí trong trình duyệt.</li>
+          <li>Nhân bản giọng chạy trên máy chủ miễn phí của Hugging Face: cần mạng, có lúc phải chờ hàng đợi hoặc hết lượt GPU; file mẫu được gửi lên máy chủ đó để xử lý.</li>
+          <li>"Đẩy lên" làm GitHub giống hệt máy này. "Kéo về" chỉ thêm cái còn thiếu, không xóa gì trên máy.</li>
           <li>Chất lượng giọng Piper tốt nhưng chưa bằng dịch vụ trả phí như MiniMax.</li>
           <li>Cao độ chỉnh bằng xử lý âm thanh, nên chỉnh nhẹ (±3 nửa cung) sẽ tự nhiên nhất.</li>
           <li>Giọng "vivos" theo nguồn dữ liệu chỉ dùng cá nhân, không thương mại. Các giọng còn lại dùng giấy phép MIT (kiểm tra lại trước khi dùng bán hàng).</li>
@@ -148,13 +258,9 @@
 
   <div id="global-toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-  <div class="avatar-wrapper" title="Đạo pro">
-    <div class="avatar-ring">
-      <img id="header-avatar-img" class="avatar-img" src="assets/avatar.jpg" alt="Ảnh đại diện">
-      <span id="header-avatar-fallback" class="avatar-fallback" style="display:none">ĐẠO</span>
-    </div>
-  </div>
 
   <script src="app.js"></script>
+  <script src="clone.js"></script>
+  <script src="sync.js"></script>
 </body>
 </html>
