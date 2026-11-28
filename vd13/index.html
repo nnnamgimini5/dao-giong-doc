@@ -50,7 +50,7 @@ video{width:100%;max-height:70vh;border-radius:14px;background:#000;display:bloc
 <body>
 <header>
   <img src="icon-192.png" alt="">
-  <div style="flex:1"><h1>VD-13 · Video Giỏ Hàng</h1><div class="mu">ĐẠO PRO · điều khiển máy tính tạo video · bản 1.0</div></div>
+  <div style="flex:1"><h1>VD-13 · Video Giỏ Hàng</h1><div class="mu">ĐẠO PRO · điều khiển máy tính tạo video · bản 1.1</div></div>
   <span id="conn" class="pill">Chưa ghép</span>
 </header>
 <main>
@@ -64,6 +64,19 @@ video{width:100%;max-height:70vh;border-radius:14px;background:#000;display:bloc
   </div>
 
   <div class="card">
+    <h2>🎬 Kiểu video & cách làm</h2>
+    <label>Kiểu video</label>
+    <select id="genre"><option value="ad">Quảng cáo sản phẩm (gắn giỏ hàng)</option><option value="drama">Phim ngắn / hội thoại nhiều nhân vật</option><option value="review">Review – nói trước camera</option><option value="free">Tự do theo video mẫu</option></select>
+    <label>Cách làm từ video mẫu</label>
+    <select id="remake"><option value="rewrite">Viết lời thoại MỚI cùng ý, nhân vật mới (khuyên dùng)</option><option value="same">Giữ nguyên lời thoại gốc</option><option value="new">Ý tưởng mới, chỉ học phong cách mẫu</option></select>
+    <label>Yêu cầu thêm (tùy chọn)</label>
+    <textarea id="brief" style="min-height:70px" placeholder="VD: đổi bối cảnh sang quán cà phê Sài Gòn, kết thúc có bất ngờ…"></textarea>
+    <label>Khóa Gemini API (để máy tự hiểu video mẫu: lời thoại, nhân vật, cảnh)</label>
+    <div class="row"><input id="apiKey" type="password" placeholder="Dán khóa bắt đầu bằng AIza…" autocomplete="off"><a class="btn pri" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">🔑 Lấy khóa</a></div>
+    <p class="mu" style="margin:6px 0 0">Bấm "Lấy khóa" → <b>Create API key</b> → chép, dán vào ô trên (chỉ làm 1 lần, lưu trên điện thoại này). Không có khóa thì chỉ làm được từ kịch bản anh tự nhập.</p>
+  </div>
+
+  <div class="card" id="prodCard">
     <h2>📦 Sản phẩm</h2>
     <label>Tên sản phẩm</label><input id="name" placeholder="VD: Nước hoa mini Lancôme">
     <label>Điểm nổi bật (mỗi dòng một ý)</label><textarea id="features" style="min-height:80px"></textarea>

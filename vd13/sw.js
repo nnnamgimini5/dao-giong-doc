@@ -1,5 +1,5 @@
 // VD-13 điện thoại: lưu khung app để mở nhanh, luôn ưu tiên bản mới khi có mạng
-const C = 'vd13p-v2', SHELL = ['./', 'index.html', 'phone.js', 'vd13link.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
+const C = 'vd13p-v3', SHELL = ['./', 'index.html', 'phone.js', 'vd13link.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k))))); self.clients.claim(); });
 self.addEventListener('fetch', e => {
